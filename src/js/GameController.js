@@ -1,3 +1,5 @@
+const MAX_MISSES = 5;
+
 export default class GameController {
     constructor(gamePlay) {
         this.gamePlay = gamePlay;
@@ -6,13 +8,13 @@ export default class GameController {
         this.activePosition = null;
         this.goblinIsVisible = false;
         this.timerId = null;
+        // Добавляем флаг, чтобы знать, когда игра завершена
+        this.isGameOver = false; 
     }
 
     init() {
         this.gamePlay.drawBoard();
-
         this.gamePlay.boardEl.addEventListener('click', (event) => this.onCellClick(event));
-
         this.start();
     }
 
@@ -23,15 +25,20 @@ export default class GameController {
     }
 
     tick() {
+        // Если игра уже закончена, таймер не должен ничего делать
+        if (this.isGameOver) return;
+
         if (this.goblinIsVisible) {
             this.missCount += 1;
             this.gamePlay.updateScore(this.hitCount, this.missCount);
         }
 
-        // Проверка поражения
-        if (this.missCount >= 5) {
+        // Используем константу вместо цифры 5
+        if (this.missCount >= MAX_MISSES) {
             clearInterval(this.timerId);
-            alert('Game Over! Вы пропустили 5 гоблинов.');
+            this.isGameOver = true; // Ставим флаг, что игра окончена
+            this.gamePlay.hideGoblin(); // Прячем гоблина, чтобы по нему нельзя было кликнуть
+            this.gamePlay.showGameOver(); // Вызываем красивое сообщение вместо alert()
             return;
         }
 
@@ -47,7 +54,13 @@ export default class GameController {
     }
 
     onCellClick(event) {
-        const clickedCell = event.target;
+        // Защита: если игра окончена, игнорируем любые клики
+        if (this.isGameOver) return;
+
+        // Находим именно ячейку (.cell), даже если кликнули по картинке внутри неё
+        const clickedCell = event.target.closest('.cell'); 
+        if (!clickedCell) return;
+
         const clickedIndex = this.gamePlay.cells.indexOf(clickedCell);
 
         if (clickedIndex === this.activePosition && this.goblinIsVisible) {
