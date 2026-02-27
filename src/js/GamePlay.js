@@ -32,12 +32,19 @@ export default class GamePlay {
 
         this.cells = Array.from(this.boardEl.children);
         this.container.append(this.boardEl);
+
+        // Создаем скрытое сообщение о конце игры
+        this.gameOverMsg = document.createElement('div');
+        this.gameOverMsg.classList.add('game-over-message', 'hidden');
+        this.gameOverMsg.textContent = 'Game Over! Вы пропустили 5 гоблинов.';
+        this.container.append(this.gameOverMsg);
     }
 
     showGoblin(index) {
         if (!this.goblinElement) {
             this.goblinElement = document.createElement('img');
             this.goblinElement.src = goblinImg;
+            this.goblinElement.alt = 'Гоблин'; // Добавили обязательный атрибут alt
             this.goblinElement.classList.add('goblin');
         }
         this.cells[index].append(this.goblinElement);
@@ -52,5 +59,10 @@ export default class GamePlay {
     updateScore(hit, miss) {
         document.getElementById('hit').textContent = hit;
         document.getElementById('miss').textContent = miss;
+    }
+
+    // Метод для показа сообщения о конце игры
+    showGameOver() {
+        this.gameOverMsg.classList.remove('hidden');
     }
 }
