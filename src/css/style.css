@@ -37,3 +37,17 @@ body {
     font-size: 1.2rem;
     font-weight: bold;
 }
+
+/* Прячет элементы */
+.hidden {
+    display: none !important;
+}
+
+/* Красивое сообщение о конце игры */
+.game-over-message {
+    color: red;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
